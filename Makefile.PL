@@ -6,7 +6,7 @@ WriteMakefile(
 	VERSION_FROM => 'FormTemplate.pm', # finds $VERSION
 	PREREQ_PM => {
 		'Class::ParamParser' => 1.03,
-		'HTML::EasyTags' => 1.0301,
+		'HTML::EasyTags' => 1.03,
 		'Data::MultiValuedHash' => 1.06,
 		'CGI::MultiValuedHash' => 1.06,
 	},

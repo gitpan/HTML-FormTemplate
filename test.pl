@@ -8,7 +8,7 @@
 
 BEGIN { $| = 1; print "1..1\n"; }
 END {print "not ok 1\n" unless $loaded;}
-use HTML::FormTemplate 1.05;
+use HTML::FormTemplate 2.0;
 $loaded = 1;
 print "ok 1\n";
 use strict;
@@ -21,7 +21,7 @@ use strict;
 
 #	* Note that "test.pl" is incomplete; it only tests that this module will 
 #	compile but not that the methods work; it is included so that people can use 
-#	the Makefile in the standard way during installation.  "test.pl" will be 
-#	fleshed out during major release 2.0 of this module, coming soon.
+#	the Makefile in the standard way during installation.  This file will be 
+#	fleshed out when I have the chance.
 
 1;

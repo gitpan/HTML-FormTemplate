@@ -1,3 +1,122 @@
+2001-04-03   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 2.0.
+	
+	* This release marks the largest update of this module since it was first 
+	released on CPAN; at least half of the code and documentation was re-written.
+	Many things were added and a few things were removed; those that were not 
+	removed should be backwards-compatible with release 1.05.  
+	
+	* HTML::FormTemplate is no longer subclassed from HTML::EasyTags, which 
+	means you can no longer call the latter's methods from an object of the 
+	former.  Prime examples of these are the autoloaded methods named after HTML 
+	tags.  Also no longer available are: groups_by_default(), prologue_tag(), 
+	comment_tag(), make_html_tag(), make_html_tag_group(), start_html(), 
+	end_html().  If you want to use any of those then you need to instantiate 
+	an HTML::EasyTags object yourself to call them from.  HTML::FormTemplate 
+	does still *use* the other class internally of course.  This change was made 
+	largely to address a glaring usability issue that is inherent with 
+	autoloading.  That is, a user could mis-spell a method name and they would 
+	not get an appropriate run-time error because an autoloaded HTML-making 
+	method got called instead.
+	
+	* Autoloading was completely removed and now there is an explicit method for 
+	each one of the form field types; the method has the same name as the type.
+	However, these are shims, and the real work is still done elsewhere.
+	
+	* The lower-level methods that do the actual making of form field HTML saw 
+	the most changes and were completely rewritten.  As part of the rewrite, 
+	functionality that was crammed into 3 methods is now handled by 9 which are 
+	more specialized.
+	
+	* All ten single field types now have group counterparts.  Although the 
+	usefulness of some of these may vary, you at least now have the choice.
+	Added are: reset_group, submit_group, popup_menu_group, scrolling_list_group.
+	The latter two cases differ from their single-field equivalents by 
+	distributing any default values so that each group member gets one rather 
+	than one field getting all.  The most useful is probably popup_menu_group.
+	
+	* All field definition attributes are now the same between corresponding 
+	single and group fields, except for group-only ones, so you can use the 
+	singular or plural names for definition attributes interchangeably.
+	
+	* The POD documentation was greatly improved.  It is now more informative, 
+	better organized, and it's easier to understand what's going on.  The 
+	methods are now arranged in a different order, with logically related ones 
+	appearing together.  Each field-type method now has a full description, 
+	including what positional and named parameters work with it (each is 
+	backwards-compatible with CGI.pm's methods of the same names).  Each 
+	definition parameter has its own description and they are all grouped by 
+	related usage.  Release 1.05 had incomplete information in the above 
+	regards and it was organized haphazardly.
+	
+	* These methods are no longer available: make_input_tag(), 
+	make_input_tag_group(), make_attribute_definition().  The first two 
+	were among those completely rewritten and the new versions are private.  
+	The third one was too proprietary and should be handled by calling code 
+	instead.
+	
+	* Several values that were hardwired constants in the previous release are 
+	now variable and can be changed with appropriate new or updated methods: 
+	new_form_determinant(), default_field_type(), default_field_name(), 
+	bad_input_marker(), required_field_marker(), private_field_marker().  The 
+	hardwired constants of old are now default values for object properties.
+	
+	* Another new methods include field_html_from_defin(), which acts sort of 
+	like the field_html() method in that it returns rendered HTML for single
+	fields, except with the new one you provide a definition as an argument 
+	instead of giving the name of a stored definition.
+	
+	* Also new is the utility method make_table_from_list() which will take a 
+	list of elements and arrange them into an HTML table of the dimensions you 
+	specify (either N columns or N rows), either down first or across first.
+	
+	* These form field attributes are new: tag_attr, min_grp_count, table_cols, 
+	table_rows, table_acrf, req_min_count, req_max_count, req_opt_match, 
+	str_above_input, str_below_input.  The first five are used when making field 
+	HTML (all but the first one being for groups only), the next three are used 
+	with input validation, and the last two are used when making whole forms.
+	
+	* New field attributes allow field groups to be arranged into tables instead 
+	of merely being linebreak-delimited.
+	
+	* New field attributes allow you to validate user input based on the number 
+	of group elements that were filled in (eg: must choose three options).  Also 
+	there is validation that user input from selection fields matches the 
+	available options, so you know if they manually changed values.
+	
+	* New field attributes place literal HTML above and below rendered fields 
+	so you can do things like applying <DIV> formats.	
+	
+	* The handling of form field definition parameters is now greatly improved 
+	so now they are much more flexible to your needs regardless of whether you 
+	feed them to the class using field-type methods or field_definitions().
+	In general you can name your parameters anything that Class::ParamParser 
+	can interpret.  But the TYPE parameter is an exception; see its POD.
+	
+	* Data::MultiValuedHash objects are always used internally to store 
+	definitions for fields, which means you can use either scalars or array 
+	refs however you like for definition parameter values without choking 
+	the class.  User-input is stored in CGI::MultiValuedHash objects, which 
+	are subclassed from the first type in case you want to provide a raw
+	query string to user_input().  The two types of MVH objects are 
+	interchangeable as far as you providing them as a method arguments.
+	
+	* Due to the different way that field definition parameters are handled 
+	internally, you can now add new ones easily without having to change the 
+	code that doesn't use them.
+	
+	* Numerous old bugs were fixed and it is quite possible that new ones 
+	have come up.  However, the new code is also a *lot* easier to understand 
+	than the old code, so it is easier to fix and add new features.
+
+	* Note that "test.pl" is incomplete; it only tests that this module will 
+	compile but not that the methods work; it is included so that people can use 
+	the Makefile in the standard way during installation.  This file will be 
+	fleshed out when I have the chance.
+	
+	* The module is now 106K including POD, up from the 76K it was before.
+
 2001-03-18   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 1.05.

@@ -50,15 +50,17 @@ Class-ParamParser-1.03.tar.gz
 	- Class::ParamParser 1.03 is required by:
 		- HTML::FormTemplate (as a parent class; parses method arguments)
 
-HTML-EasyTags-1.0301.tar.gz
+HTML-EasyTags-1.03.tar.gz
 	- by Darren Duncan (DUNCAND)
-	- HTML::EasyTags 1.0301 is required by:
-		- HTML::FormTemplate (as a parent class; makes html, parses ffs params)
+	- HTML::EasyTags 1.03 is required by:
+		- HTML::FormTemplate (makes form field HTML)
 
 MultiValuedHash-1.06.tar.gz
 	- by Darren Duncan (DUNCAND)
+	- Data::MultiValuedHash 1.06 is required by:
+		- HTML::FormTemplate (stores form field definitions)
 	- CGI::MultiValuedHash 1.06 is required by:
-		- HTML::FormTemplate (stores form field defin, stores/parses user input)
+		- HTML::FormTemplate (stores and parses/url-decodes user-input)
 
 INSTALLATION
 
@@ -105,27 +107,23 @@ support issues later, so that users of my modules can help each other with them.
 
 TO DO
 
-	* Completely redo the module in terms of design and structure; add a wealth 
-	of new features; make existing features easier to use; better documentation, 
-	leverage existing code as much as possible.  (Below are a few ideas.)
-	* The redone module will be version 2.0, up from 1.0x.
-	* Remove any parent class dependencies on HTML::EasyTags; this makes the 
-	module more user friendly since misspelled method names would then yield a 
-	runtime error instead of merrily going on and making an html tag.
-	* Make more user friendly by allowing named arguments or form field 
-	definition arguments to have case insensitive names; currently they're not.
-	* Add field attribute readonly, allowing once-editable field data to share 
+	* Add a battery of tests to ensure that the module is working properly.
+	* Allow echo reports to show the selection field labels for the user input 
+	instead of the "values" that are actually passed behind the scenes.
+	* Add field attribute read_only, allowing once-editable field data to share 
 	screen space with still-editable field data.
-	* Add field attribute to multiple-answer fields that make the validation 
-	check if users chose the correct number of answers (eg: pick 3 checkboxes).
-	* Add validation checking for selection fields to see that choices submitted 
-	match selection of choices given.
 	* Allow individual editing of internally stored field definitions, rather 
 	than requiring that they are all defined at once.
 	* Customize validation error messages so they give a better idea what about 
 	the entry was inappropriate (eg: wrong number of selections).
+	* Add support for customizing the appearance of forms more, such as having 
+	literal text/html appearing between elements of @definitions.
 	* Make a utility program that utilizes this module's abilities to let users 
 	create form definitions for it with a web browser.
+	* Add more field types and JavaScript support where appropriate.
+	* Add support for "callback" or "closure" subroutines where appropriate.
+	* I have few more ideas in this regard, but am open to suggestions.
+	* Get my other modules done.
 
 AUTHOR
 
