@@ -9,15 +9,18 @@ HTML::FormTemplate - Make data-defined persistant forms, reports
 package HTML::FormTemplate;
 require 5.004;
 
-# Copyright (c) 1999-2001, Darren R. Duncan. All rights reserved. This module is
-# free software; you can redistribute it and/or modify it under the same terms as
-# Perl itself.  However, I do request that this copyright information remain
-# attached to the file.  If you modify this module and redistribute a changed
-# version then please attach a note listing the modifications.
+# Copyright (c) 1999-2003, Darren R. Duncan.  All rights reserved.  This module
+# is free software; you can redistribute it and/or modify it under the same terms
+# as Perl itself.  However, I do request that this copyright information and
+# credits remain attached to the file.  If you modify this module and
+# redistribute a changed version then please attach a note listing the
+# modifications.  This module is available "as-is" and the author can not be held
+# accountable for any problems resulting from its use.
 
 use strict;
+use warnings;
 use vars qw($VERSION @ISA);
-$VERSION = '2.02';
+$VERSION = '2.021';
 
 ######################################################################
 
@@ -33,20 +36,20 @@ $VERSION = '2.02';
 
 =head2 Nonstandard Modules
 
-	Class::ParamParser 1.03
-	HTML::EasyTags 1.03
-	Data::MultiValuedHash 1.06
-	CGI::MultiValuedHash 1.06
+	Class::ParamParser 1.041
+	HTML::EasyTags 1.071
+	Data::MultiValuedHash 1.081
+	CGI::MultiValuedHash 1.081
 
 =cut
 
 ######################################################################
 
-use Class::ParamParser 1.03;
+use Class::ParamParser 1.041;
 @ISA = qw( Class::ParamParser );
-use HTML::EasyTags 1.03;
-use Data::MultiValuedHash 1.06;
-use CGI::MultiValuedHash 1.06;
+use HTML::EasyTags 1.071;
+use Data::MultiValuedHash 1.081;
+use CGI::MultiValuedHash 1.081;
 
 ######################################################################
 
@@ -54,6 +57,7 @@ use CGI::MultiValuedHash 1.06;
 
 	#!/usr/bin/perl
 	use strict;
+	use warnings;
 
 	use HTML::FormTemplate;
 	use HTML::EasyTags;
@@ -853,7 +857,7 @@ sub user_input {
 	my ($self, $new_value) = @_;
 	if( defined( $new_value ) ) {
 		$new_value = CGI::MultiValuedHash->new( 0, $new_value );
-		$self->{$KEY_FIELD_INPUT} = $new_value;			
+		$self->{$KEY_FIELD_INPUT} = $new_value;
 		$self->{$KEY_NEW_FORM} = 
 			!$new_value->fetch_value( $self->{$KEY_IS_SUBMIT} );
 		$self->{$KEY_FIELD_RENDE} = undef;
@@ -980,7 +984,7 @@ While the named argument "linebreak" is shown here for completeness, please see
 the other section for its explanation also.
 
 =head2 reset( NAME[, DEFAULT] )
-	
+
 	NAME
 	[DEFAULT or VALUE or LABEL]
 
@@ -989,7 +993,7 @@ optionally DEFAULT as its value.  Web browsers may or may not use this value as
 a button label and they may or may not include the value with form submissions.
 
 =head2 submit( NAME[, DEFAULT] )
-	
+
 	NAME
 	[DEFAULT or VALUE or LABEL]
 
@@ -998,7 +1002,7 @@ optionally DEFAULT as its value.  Web browsers may or may not use this value as
 a button label and they may or may not include the value with form submissions.
 
 =head2 hidden( NAME, DEFAULT )
-	
+
 	NAME
 	[DEFAULT or VALUE]
 
@@ -1006,7 +1010,7 @@ This method makes a single hidden field that has NAME for its name and
 DEFAULT as its value.  Nothing is displayed visually by web browsers.
 
 =head2 textfield( NAME[, DEFAULT[, SIZE[, MAXLENGTH]]] )
-	
+
 	NAME
 	[DEFAULT or VALUE]
 	SIZE
@@ -1018,7 +1022,7 @@ SIZE characters at once.  The user can enter a maximum of MAXLENGTH characters
 if that argument is set, or is not limited otherwise.
 
 =head2 password_field( NAME[, DEFAULT[, SIZE[, MAXLENGTH]]] )
-	
+
 	NAME
 	[DEFAULT or VALUE]
 	SIZE
@@ -1029,7 +1033,7 @@ DEFAULT as its value.  The arguments are the same as a textfield but the
 displayed value is visually bulleted out by the browser.
 
 =head2 textarea( NAME[, DEFAULT[, ROWS[, COLS]]] )
-	
+
 	NAME
 	[DEFAULT or VALUE or TEXT]
 	ROWS
@@ -1040,7 +1044,7 @@ DEFAULT as its value.  The field is ROWS lines high and is wide enough to
 display COLS characters at once.
 
 =head2 checkbox( NAME[, DEFAULT[, VALUE[, LABEL]]] )
-	
+
 	NAME
 	VALUE
 	[DEFAULT or CHECKED or SELECTED or ON]
@@ -1055,7 +1059,7 @@ that appears beside the checkbox.  If LABEL is defined then that is used as
 the label text; otherwise NAME is used by default.
 
 =head2 radio( NAME[, DEFAULT[, VALUE[, LABEL]]] )
-	
+
 	NAME
 	VALUE
 	[DEFAULT or CHECKED or SELECTED or ON]
@@ -1066,7 +1070,7 @@ This method makes a single radio option that has NAME for its name and
 VALUE as its value.  The arguments are the same as for a checkbox.
 
 =head2 popup_menu( NAME, [DEFAULTS], VALUES[, LABELS] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1089,7 +1093,7 @@ is the only one visible while the field doesn't have the user's focus (the menu
 visually opens up when the field has focus).
 
 =head2 scrolling_list( NAME, [DEFAULTS], VALUES[, LABELS] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1107,7 +1111,7 @@ elements in VALUES if false.  Note that setting SIZE to 1 will cause this
 field to be a popup menu instead.
 
 =head2 reset_group( NAME[, DEFAULTS] )
-	
+
 	NAME
 	[DEFAULTS or VALUES or LABELS]
 
@@ -1115,7 +1119,7 @@ This method makes a group of related reset buttons, which have NAME in common.
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 submit_group( NAME[, DEFAULTS] )
-	
+
 	NAME
 	[DEFAULTS or VALUES or LABELS]
 
@@ -1123,7 +1127,7 @@ This method makes a group of related submit buttons, which have NAME in common.
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 hidden_group( NAME, DEFAULTS )
-	
+
 	NAME
 	[DEFAULTS or VALUES]
 
@@ -1131,7 +1135,7 @@ This method makes a group of related hidden fields, which have NAME in common.
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 textfield_group( NAME[, DEFAULTS[, LINEBREAK[, SIZE[, MAXLENGTH]]]] )
-	
+
 	NAME
 	[DEFAULTS or VALUES]
 	SIZE
@@ -1141,7 +1145,7 @@ This method makes a group of related text entry fields, which have NAME in commo
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 password_field_group( NAME[, DEFAULTS[, LINEBREAK[, SIZE[, MAXLENGTH]]]] )
-	
+
 	NAME
 	[DEFAULTS or VALUES]
 	SIZE
@@ -1151,7 +1155,7 @@ This method makes a group of related password entry fields, which have NAME in c
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 textarea_group( NAME[, DEFAULTS[, LINEBREAK[, ROWS[, COLS]]]] )
-	
+
 	NAME
 	[DEFAULTS or VALUES or TEXT]
 	ROWS
@@ -1161,7 +1165,7 @@ This method makes a group of related big text fields, which have NAME in common.
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 checkbox_group( NAME, VALUES[, DEFAULTS[, LINEBREAK[, LABELS]]] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1182,7 +1186,7 @@ beside each checkbox.  Any checkbox for which LABELS is undefined will default t
 using its value for a label.
 
 =head2 radio_group( NAME, VALUES[, DEFAULTS[, LINEBREAK[, LABELS]]] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1194,7 +1198,7 @@ There is one group member for each element in the array ref VALUES.
 The arguments are the same as for a checkbox_group.
 
 =head2 popup_menu_group( NAME, VALUES[, DEFAULTS[, LINEBREAK[, LABELS]]] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1204,7 +1208,7 @@ This method makes a group of related popup menus, which have NAME in common.
 There is one group member for each element in the array ref DEFAULTS.
 
 =head2 scrolling_list_group( NAME, VALUES[, DEFAULTS[, LINEBREAK[, LABELS]]] )
-	
+
 	NAME
 	VALUES
 	[DEFAULTS or CHECKED or SELECTED or ON]
@@ -1410,7 +1414,7 @@ finished.  This method is called by any input checking or html making routines i
 sub normalize_field_definitions {
 	my $self = shift( @_ );
 	my $ra_field_defn = $self->{$KEY_FIELD_DEFNA};
-	
+
 	my $nfn_field_count = 0;
 	my $has_is_submit = 0;
 	my $has_submit_button = 0;
@@ -1418,7 +1422,7 @@ sub normalize_field_definitions {
 	foreach my $defin (@{$ra_field_defn}) {
 
 		# Make sure the field definition has a valid field type.
-		
+
 		my $type = $defin->fetch_value( $FKEY_TYPE );
 		unless( $FIELD_TYPES{$type} ) {
 			$type = $self->{$KEY_DEF_FF_TYPE};
@@ -1426,7 +1430,7 @@ sub normalize_field_definitions {
 		}
 
 		# Make sure the field definition has field name.
-		
+
 		my $name = $defin->fetch_value( $FKEY_NAME );
 		if( !$name or $name =~ /^$self->{$KEY_DEF_FF_NAME}/ ) {
 			$name = $self->{$KEY_DEF_FF_NAME}.
@@ -1437,16 +1441,16 @@ sub normalize_field_definitions {
 		$name eq $self->{$KEY_IS_SUBMIT} and $has_is_submit = 1;
 		$type eq 'submit' and $has_submit_button = 1;
 	}
-	
-	unless( $has_is_submit ) {	
+
+	unless( $has_is_submit ) {
 		unshift( @{$ra_field_defn}, Data::MultiValuedHash->new( 1, {
 			$FKEY_TYPE => 'hidden',
 			$FKEY_NAME => $self->{$KEY_IS_SUBMIT},
 			$FKEY_DEFAULTS => 1,
 		} ) );
 	}
-	
-	unless( $has_submit_button ) {	
+
+	unless( $has_submit_button ) {
 		push( @{$ra_field_defn}, Data::MultiValuedHash->new( 1, {
 			$FKEY_TYPE => 'submit',
 			$FKEY_NAME => $self->{$KEY_DEF_FF_NAME}.
@@ -1569,7 +1573,7 @@ sub validate_form_input {
 
 	my $user_input = $self->{$KEY_FIELD_INPUT};
 	my %input_invalid = ();
-	
+
 	foreach my $defin (@{$self->{$KEY_FIELD_DEFNA}}) {
 		my $type = $defin->fetch_value( $FKEY_TYPE );
 
@@ -1675,7 +1679,7 @@ sub make_html_input_form {
 	my $rh_invalid = $self->{$KEY_FIELD_INVAL};
 	my @input_form = ();
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
-	
+
 	push( @input_form, $self->start_form() );
 	if( $in_table_format ) {
 		push( @input_form, "\n<table>" );
@@ -1689,7 +1693,7 @@ sub make_html_input_form {
 			push( @input_form, $rh_field_html->{$name} );
 			next;
 		}
-		
+
 		my $flags_html = '';
 		my $label_html = '';
 		my $error_html = '';
@@ -1704,7 +1708,7 @@ sub make_html_input_form {
 			if( $defin->fetch_value( $FKEY_IS_PRIVATE ) ) {
 				$flags_html .= "\n$self->{$KEY_PRIVA_MARK}";
 			}
-			
+
 			$label_html .= "\n<strong>" .
 				$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</strong>";
 			if( my $hm = $defin->fetch_value( $FKEY_HELP_MESSAGE ) ) {
@@ -1723,13 +1727,13 @@ sub make_html_input_form {
 				}
 			}
 		}
-		
+
 		my $field_html = $rh_field_html->{$name};
 		ref( $field_html ) eq 'ARRAY' and 
 			$field_html = join( '', @{$field_html} );  # compensate "list" attr
 		my $str_above = $defin->fetch_value( $FKEY_STR_ABOVE_INPUT );
 		my $str_below = $defin->fetch_value( $FKEY_STR_BELOW_INPUT );
-		
+
 		if( $in_table_format ) {
 			push( @input_form, <<__endquote );
 \n<tr>
@@ -1856,7 +1860,7 @@ sub make_html_input_echo {
 	my $user_input = $self->{$KEY_FIELD_INPUT};
 	my @input_echo = ();
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
-	
+
 	if( $in_table_format ) {
 		push( @input_echo, "\n<table>" );
 	}
@@ -1874,7 +1878,7 @@ sub make_html_input_echo {
 		if( $exclude_private and $defin->fetch_value( $FKEY_IS_PRIVATE ) ) {
 			next;
 		}
-		
+
 		my $field_title = "\n<strong>" .
 			$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</strong>";
 
@@ -1931,7 +1935,7 @@ sub make_text_input_echo {
 	my $user_input = $self->{$KEY_FIELD_INPUT};
 	my @input_echo = ();
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
-	
+
 	foreach my $defin (@{$self->{$KEY_FIELD_DEFNA}}) {
 		my $type = $defin->fetch_value( $FKEY_TYPE );
 		my $name = $defin->fetch_value( $FKEY_NAME );
@@ -2105,7 +2109,7 @@ sub make_table_from_list {
 	my ($self, $ra_list, $max_cols, $max_rows, $acr_first) = @_;
 	my @source = ref( $ra_list ) eq 'ARRAY' ? @{$ra_list} : $ra_list;
 	my @table_lines = ();
-	
+
 	# Determine the ROWS x COLS dimensions of our table using the count of 
 	# elements in SOURCE and any pre-defined COLS and ROWS values.  Then top 
 	# up the SOURCE array with blanks so that it fills the table evenly; this 
@@ -2120,9 +2124,9 @@ sub make_table_from_list {
 		$max_cols = int( $length / $max_rows ) + ($length % $max_rows ? 1 : 0);
 	}
 	push( @source, map { '&nbsp;' } (1..($max_cols * $max_rows - $length)) );
-	
+
 	# Option one is to arrange the source elements across first and then down.
-	
+
 	if( $acr_first ) {
 		push( @table_lines, "<table>\n" );
 		foreach my $row_num (1..$max_rows) {
@@ -2190,7 +2194,7 @@ sub _rename_defin_props {
 	$defin = $self->params_to_hash( [$defin], 0, 
 		@{$FIELD_TYPES{$type}->{$TKEY_PARSER}}, 1 );
 	$defin->{$FKEY_TYPE} = $type;
-	
+
 	return( $defin );
 }
 
@@ -2210,9 +2214,9 @@ sub _rename_defin_props {
 sub _make_field_html {
 	my ($self, $defin) = @_;
 	$defin = Data::MultiValuedHash->new( 1, $defin );  # copy input
-	
+
 	# Make sure the field definition has a valid field type.
-	
+
 	my $type = $defin->fetch_value( $FKEY_TYPE );
 	unless( $FIELD_TYPES{$type} ) {
 		$type = $self->{$KEY_DEF_FF_TYPE};
@@ -2220,7 +2224,7 @@ sub _make_field_html {
 	}
 
 	# Make sure the field definition has field name.
-	
+
 	unless( $defin->exists( $FKEY_NAME ) ) {
 		$defin->store( $FKEY_NAME, $self->{$KEY_DEF_FF_NAME} );
 	}
@@ -2243,7 +2247,7 @@ sub _make_field_html {
 	}
 
 	# Make sure the field definition's misc tag attrib are properly formatted.
-	
+
 	my $tag_attr = $defin->fetch_value( $FKEY_TAG_ATTR );
 	ref( $tag_attr ) eq 'HASH' or $tag_attr = {};
 	%{$tag_attr} = (
@@ -2274,21 +2278,21 @@ sub _make_field_html {
 	# Determine which of our private methods will make HTML for this field type.
 
 	my $method = $FIELD_TYPES{$type}->{$TKEY_METHOD};
-	
+
 	# Make the field HTML.
-	
+
 	my $html = $self->$method( $defin );
-	
+
 	# If the field type is a group, then $html is an array ref with a 
 	# group member in each array element.  So, unless the list property is true, 
 	# join the group into a scalar, delim by linebreaks or grouped in a table.
-	
+
 	if( ref( $html ) eq 'ARRAY' ) {
 		$html = $self->_join_field_group_html( $defin, $html );
 	}
-	
+
 	# Return the new field HTML.
-	
+
 	return( $html );
 }
 
@@ -2299,17 +2303,17 @@ sub _make_field_html {
 
 sub _make_textarea_html {
 	my ($self, $defin) = @_;
-	
+
 	# Set up default attributes common to textarea tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		name => $defin->fetch_value( $FKEY_NAME ),
 	);
 	my $default = $defin->fetch_value( $FKEY_DEFAULTS );
-	
+
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	return( $tagmaker->make_html_tag( 'textarea', \%params, $default ) );
 }
@@ -2321,25 +2325,25 @@ sub _make_textarea_html {
 
 sub _make_textarea_group_html {
 	my ($self, $defin) = @_;
-	
+
 	# Set up default attributes common to textarea tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		name => $defin->fetch_value( $FKEY_NAME ),
 	);
 	my @defaults = $defin->fetch( $FKEY_DEFAULTS );
-	
+
 	# Make sure we have enough group members.
-	
+
 	my $wanted = $defin->fetch_value( $FKEY_MIN_GRP_COUNT );
 	my $have = @defaults;
 	if( $have < $wanted ) {
 		push( @defaults, [map { '' } (1..($wanted - $have))] );
 	}
-	
+
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	return( $tagmaker->make_html_tag_group( 
 		'textarea', \%params, \@defaults, 1 ) );
@@ -2353,9 +2357,9 @@ sub _make_textarea_group_html {
 sub _make_input_html {
 	my ($self, $defin) = @_;
 	my $type = $defin->fetch_value( $FKEY_TYPE );
-	
+
 	# Set up default attributes common to all input tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		type => $INPUT_TAG_IMPL_TYPE{$type},
@@ -2363,11 +2367,11 @@ sub _make_input_html {
 		value => $defin->fetch_value( $FKEY_DEFAULTS ),
 	);
 	my $label = '';
-	
+
 	# Set up attributes that are unique to check boxes and radio buttons.
 	# One difference is that user input affects the "checked" attribute 
 	# instead of "value".
-	
+
 	if( $type eq 'checkbox' or $type eq 'radio' ) {
 		$params{value} = $defin->fetch_value( $FKEY_VALUES );
 		defined( $params{value} ) or $params{value} = 'on';
@@ -2382,9 +2386,9 @@ sub _make_input_html {
 	} else {
 		$params{value} eq '' and delete( $params{value} );
 	}
-	
+
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	return( $tagmaker->make_html_tag( 'input', \%params, $label ) );
 }
@@ -2397,9 +2401,9 @@ sub _make_input_html {
 sub _make_input_group_html {
 	my ($self, $defin) = @_;
 	my $type = $defin->fetch_value( $FKEY_TYPE );
-	
+
 	# Set up default attributes common to all input tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		type => $INPUT_TAG_IMPL_TYPE{$type},
@@ -2411,7 +2415,7 @@ sub _make_input_group_html {
 	# Set up attributes that are unique to checkboxes and radio buttons.
 	# One difference is that user input affects the "checked" attribute 
 	# instead of "value".
-	
+
 	if( $type eq 'checkbox_group' or $type eq 'radio_group' ) {
 		my $ra_values = $defin->fetch( $FKEY_VALUES ) || ['on'];
 		$params{value} = $ra_values;
@@ -2459,7 +2463,7 @@ sub _make_input_group_html {
 		@labels = @{$ra_labels};
 
 	# Make sure we have enough group members.
-	
+
 	} else {
 		my $wanted = $defin->fetch_value( $FKEY_MIN_GRP_COUNT );
 		my $have = @{$params{value}};
@@ -2467,9 +2471,9 @@ sub _make_input_group_html {
 			push( @{$params{value}}, [map { '' } (1..($wanted - $have))] );
 		}
 	}
-	
+
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	return( $tagmaker->make_html_tag_group( 'input', \%params, \@labels, 1 ) );
 }
@@ -2483,7 +2487,7 @@ sub _make_select_html {
 	my ($self, $defin) = @_;
 
 	# Set up default attributes for the option tags.
-	
+
 	my $ra_values = $defin->fetch( $FKEY_VALUES ) || ['on'];
 
 	# The definition property "defaults" is handled the same way as the 
@@ -2511,9 +2515,9 @@ sub _make_select_html {
 			$ra_labels->[$index] = $ra_values->[$index];
 		}
 	}
-	
+
 	# Set up default attributes common to all select tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		name => $defin->fetch_value( $FKEY_NAME ),
@@ -2523,19 +2527,19 @@ sub _make_select_html {
 	# Set up attributes that are unique to popup menus.  They are 
 	# different in that only one item can be displayed at a time, and 
 	# correspondingly the user can only choose one item at a time.
-	
+
 	if( $defin->fetch_value( $FKEY_TYPE ) eq 'popup_menu' ) {
 		$params{size} = 1;
 		$params{multiple} = 0;
 	}
 
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	return( join( '', 
-		$tagmaker->make_html_tag( 'select', \%params, undef, 'start' ),	
+		$tagmaker->make_html_tag( 'select', \%params, undef, 'start' ),
 		@{$tagmaker->make_html_tag_group( 'option', { value => $ra_values, 
-			selected => $ra_defaults },	$ra_labels, 1 )},	
+			selected => $ra_defaults },	$ra_labels, 1 )},
 		$tagmaker->make_html_tag( 'select', {}, undef, 'end' ),
 	) );
 }
@@ -2549,7 +2553,7 @@ sub _make_select_group_html {
 	my ($self, $defin) = @_;
 
 	# Set up default attributes for the option tags.
-	
+
 	my $ra_values = $defin->fetch( $FKEY_VALUES ) || ['on'];
 
 	# The definition property "labels" is handled the same way as the 
@@ -2565,9 +2569,9 @@ sub _make_select_group_html {
 			$ra_labels->[$index] = $ra_values->[$index];
 		}
 	}
-	
+
 	# Set up default attributes common to all select tags.
-	
+
 	my %params = (
 		%{$defin->fetch_value( $FKEY_TAG_ATTR )},
 		name => $defin->fetch_value( $FKEY_NAME ),
@@ -2577,7 +2581,7 @@ sub _make_select_group_html {
 	# Set up attributes that are unique to popup menus.  They are 
 	# different in that only one item can be displayed at a time, and 
 	# correspondingly the user can only choose one item at a time.
-	
+
 	if( $defin->fetch_value( $FKEY_TYPE ) eq 'popup_menu_group' ) {
 		$params{size} = 1;
 		$params{multiple} = 0;
@@ -2594,7 +2598,7 @@ sub _make_select_group_html {
 	@defaults = grep { $rh_defaults->{$_} } @defaults;
 
 	# Make sure we have enough group members.
-	
+
 	my $wanted = $defin->fetch_value( $FKEY_MIN_GRP_COUNT );
 	my $have = @defaults;
 	if( $have < $wanted ) {
@@ -2602,15 +2606,15 @@ sub _make_select_group_html {
 	}
 
 	# Make the field HTML and return it.
-	
+
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	my @field_list = ();
 	foreach my $default (@defaults) {
 		my $ra_defaults = [map { $_ eq $default } @{$ra_values}];
 		push( @field_list, join( '', 
-			$tagmaker->make_html_tag( 'select', \%params, undef, 'start' ),	
+			$tagmaker->make_html_tag( 'select', \%params, undef, 'start' ),
 			@{$tagmaker->make_html_tag_group( 'option', { value => $ra_values, 
-				selected => $ra_defaults },	$ra_labels, 1 )},	
+				selected => $ra_defaults },	$ra_labels, 1 )},
 			$tagmaker->make_html_tag( 'select', {}, undef, 'end' ),
 		) );
 	}
@@ -2631,18 +2635,18 @@ sub _make_select_group_html {
 
 sub _join_field_group_html {
 	my ($self, $defin, $ra_tag_html) = @_;
-	
+
 	# First, see if definition wants a list returned.
-	
+
 	$defin->fetch_value( $FKEY_LIST ) and return( $ra_tag_html );
-	
+
 	# Second, see if definition wants linebreak-delimited fields.
-	
+
 	$defin->fetch_value( $FKEY_LINEBREAK ) and 
 		return( join( '<br />', @{$ra_tag_html} ) );
-		
+
 	# Third, see if definition wants fields returned in an HTML table.
-	
+
 	my $cols = $defin->fetch_value( $FKEY_TABLE_COLS );  # 3 lines chg 2.01
 	my $rows = $defin->fetch_value( $FKEY_TABLE_ROWS );
 	my $acr_first = $defin->fetch_value( $FKEY_TABLE_ACRF );
@@ -2650,9 +2654,9 @@ sub _join_field_group_html {
 		return( $self->make_table_from_list( $ra_tag_html, 
 			$cols, $rows, $acr_first ) );
 	}
-	
+
 	# If none of the above, then return fields concatenated as is.
-	
+
 	return( join( '', @{$ra_tag_html} ) );
 }
 
@@ -2969,16 +2973,21 @@ not, and we can also define fields as-needed in the same manner that CGI.pm does
 
 =head1 AUTHOR
 
-Copyright (c) 1999-2001, Darren R. Duncan. All rights reserved. This module is
-free software; you can redistribute it and/or modify it under the same terms as
-Perl itself.  However, I do request that this copyright information remain
-attached to the file.  If you modify this module and redistribute a changed
-version then please attach a note listing the modifications.
+Copyright (c) 1999-2003, Darren R. Duncan.  All rights reserved.  This module
+is free software; you can redistribute it and/or modify it under the same terms
+as Perl itself.  However, I do request that this copyright information and
+credits remain attached to the file.  If you modify this module and
+redistribute a changed version then please attach a note listing the
+modifications.  This module is available "as-is" and the author can not be held
+accountable for any problems resulting from its use.
 
 I am always interested in knowing how my work helps others, so if you put this
-module to use in any of your own code then please send me the URL.  Also, if you
-make modifications to the module because it doesn't work the way you need, please
-send me a copy so that I can roll desirable changes into the main release.
+module to use in any of your own products or services then I would appreciate
+(but not require) it if you send me the website url for said product or
+service, so I know who you are.  Also, if you make non-proprietary changes to
+the module because it doesn't work the way you need, and you are willing to
+make these freely available, then please send me a copy so that I can roll
+desirable changes into the main release.
 
 Address comments, suggestions, and bug reports to B<perl@DarrenDuncan.net>.
 

@@ -1,6 +1,6 @@
 ChangeLog
-FormTemplate.pm
+lib/HTML/FormTemplate.pm
 Makefile.PL
 MANIFEST
 ReadMe
-test.pl
+t/HTML-FormTemplate.t

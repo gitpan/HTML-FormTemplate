@@ -3,11 +3,11 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
 	NAME	=> 'HTML::FormTemplate',
-	VERSION_FROM => 'FormTemplate.pm', # finds $VERSION
+	VERSION_FROM => 'lib/HTML/FormTemplate.pm', # finds $VERSION
 	PREREQ_PM => {
-		'Class::ParamParser' => 1.03,
-		'HTML::EasyTags' => 1.03,
-		'Data::MultiValuedHash' => 1.06,
-		'CGI::MultiValuedHash' => 1.06,
+		'Class::ParamParser' => 1.041,
+		'HTML::EasyTags' => 1.071,
+		'Data::MultiValuedHash' => 1.081,
+		'CGI::MultiValuedHash' => 1.081,
 	},
 );
