@@ -1,6 +1,6 @@
 =head1 NAME
 
-HTML::FormTemplate - Store definition, make persist forms, report
+HTML::FormTemplate - Make data-defined persistant forms, reports
 
 =cut
 
@@ -17,7 +17,7 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA);
-$VERSION = '2.0';
+$VERSION = '2.01';
 
 ######################################################################
 
@@ -52,6 +52,7 @@ use CGI::MultiValuedHash 1.06;
 
 =head1 SYNOPSIS
 
+	#!/usr/bin/perl
 	use strict;
 
 	use HTML::FormTemplate;
@@ -79,15 +80,12 @@ use CGI::MultiValuedHash 1.06;
 	);
 	
 	my $query_string = '';
-	if( $ENV{'REQUEST_METHOD'} =~ /^(GET|HEAD)$/ ) {
-		$query_string = $ENV{'QUERY_STRING'};
-	} else {
-		read( STDIN, $query_string, $ENV{'CONTENT_LENGTH'} );
-		chomp( $query_string );
-	}
+	read( STDIN, $query_string, $ENV{'CONTENT_LENGTH'} );
+	chomp( $query_string );
 	
 	my $form = HTML::FormTemplate->new();
-	$form->form_submit_url( $ENV{'SCRIPT_NAME'} );
+	$form->form_submit_url( 
+		'http://'.($ENV{'HTTP_HOST'} || 'localhost').$ENV{'SCRIPT_NAME'} );
 	$form->field_definitions( \@definitions );
 	$form->user_input( $query_string );
 	
@@ -275,7 +273,7 @@ the valid field types is returned by the valid_field_type_list() method.
 	</HEAD>
 	<BODY>
 	<H1>A Simple Example</H1>
-	<FORM METHOD="post" ACTION="localhost">
+	<FORM METHOD="post" ACTION="http://localhost">
 	<TABLE CELLSPACING="5">
 	<INPUT TYPE="hidden" NAME=".is_submit" VALUE="1">
 	<TR>
@@ -625,7 +623,7 @@ sub initialize {
 	$self->{$KEY_IS_SUBMIT} = '.is_submit';
 	$self->{$KEY_DEF_FF_TYPE} = 'textfield';
 	$self->{$KEY_DEF_FF_NAME} = 'nonamefield';
-	$self->{$KEY_SUBMIT_URL} = 'localhost';
+	$self->{$KEY_SUBMIT_URL} = 'http://localhost';
 	$self->{$KEY_SUBMIT_MET} = 'post';
 	$self->{$KEY_FIELD_DEFNA} = [];
 	$self->{$KEY_NORMALIZED} = 0;
@@ -2037,7 +2035,7 @@ sub make_table_from_list {
 		foreach my $row_num (1..$max_rows) {
 			my @row_source = splice( @source, 0, $max_cols ) or last;
 			my @row_lines = map { "<TD>$_</TD>" } @row_source;
-			push( @table_lines, '<TR>'.join( "\n", @row_lines ).'</TR>' );
+			push( @table_lines, "<TR>\n".join( "\n", @row_lines )."\n</TR>\n" );
 		}
 		push( @table_lines, "</TABLE>\n" );
 
@@ -2047,7 +2045,8 @@ sub make_table_from_list {
 		push( @table_lines, "<TABLE>\n<TR>\n" );
 		foreach my $col_num (1..$max_cols) {
 			my @cell_source = splice( @source, 0, $max_rows ) or last;
-			push( @table_lines, '<TD>'.join( '<BR>', @cell_source ).'</TD>' );
+			push( @table_lines, 
+				"<TD>\n".join( "<BR>\n", @cell_source )."\n</TD>\n" );
 		}
 		push( @table_lines, "</TR>\n</TABLE>\n" );
 	}
@@ -2085,14 +2084,11 @@ sub _proxy {
 sub _rename_defin_props {
 	my ($self, $defin) = @_;
 
-	# Determine our field type.  Note that the first line is a hack due to 
-	# the definition not being parsed yet, so we have to manually try several 
-	# different aliases of the "type" field parameter.  The variations are 
-	# full-lowercase and full-uppercase without and with a "-".  If "type" is 
-	# spelled in a mixed case then we won't find it.  Chicken and the Egg...
+	# Determine our field type.  Note that we have to do a bit of parsing ourself 
+	# to get the type because we need the type to know how to parse definition.
 
-	my $type = $defin->{lc($FKEY_TYPE)} || $defin->{uc($FKEY_TYPE)} || 
-		$defin->{"-".lc($FKEY_TYPE)} || $defin->{"-".uc($FKEY_TYPE)};
+	my %lc_defin = map { ( lc($_) => $defin->{$_} ) } sort keys %{$defin};
+	my $type = $defin->{lc($FKEY_TYPE)} || $defin->{"-".lc($FKEY_TYPE)};
 	ref( $type ) eq 'ARRAY' and $type = $type->[0];
 	$FIELD_TYPES{$type} or $type = $self->{$KEY_DEF_FF_TYPE};
 
@@ -2554,8 +2550,9 @@ sub _join_field_group_html {
 		
 	# Third, see if definition wants fields returned in an HTML table.
 	
-	my ($cols, $rows, $acr_first) = $defin->fetch_first( 
-		[$FKEY_TABLE_COLS, $FKEY_TABLE_ROWS, $FKEY_TABLE_ACRF] );
+	my $cols = $defin->fetch_value( $FKEY_TABLE_COLS );  # 3 lines chg 2.01
+	my $rows = $defin->fetch_value( $FKEY_TABLE_ROWS );
+	my $acr_first = $defin->fetch_value( $FKEY_TABLE_ACRF );
 	if( $cols or $rows ) {
 		return( $self->make_table_from_list( $ra_tag_html, 
 			$cols, $rows, $acr_first ) );
@@ -2596,14 +2593,6 @@ defaults to default_field_type() if not valid.  This property is used to
 determine how to handle all of the other properties, so it is important to have.  
 The only time that you don't use this property is with the field-type methods, 
 because the field type is explicitely provided as the method name itself.
-
-B<WARNING:> Due to an unfortunate "chicken and egg" scenario where we need to 
-know the field type prior to parsing the definition that contains it, we have 
-to manually search the unparsed definition for the various aliases of TYPE 
-(lower and uppercased versions, with or without the "-" prefix).  Since we 
-don't check every permutation, you need to spell TYPE all in the same case; 
-if you use mixed case then we won't find it and the field definition will be 
-parsed according to default_field_type().  Consider yourself warned.
 
 =head2 name
 
@@ -2914,6 +2903,7 @@ MacPerl's Shuck and CPAN's HTMLizer rendered it properly.
 =head1 SEE ALSO
 
 perl(1), Class::ParamParser, HTML::EasyTags, Data::MultiValuedHash, 
-CGI::MultiValuedHash, CGI, CGI::FormMagick, CGI::QuickForm, CGI::Validate.
+CGI::MultiValuedHash, CGI::Portable, CGI, CGI::FormMagick, CGI::QuickForm, 
+CGI::Validate.
 
 =cut

@@ -1,3 +1,24 @@
+2001-06-04   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 2.01.
+	
+	* Fixed bug related to organizing field groups into tables.  Previously the 
+	field definition attributes [table_rows/rows, table_cols/cols, table_acrf] 
+	were not fetched properly, causing strange effects like having a single 
+	table column when two were requested.  The table feature now works properly.
+	
+	* Removed a small design flaw where the "type" attribute of field definitions 
+	had needed to be a certain typecase in order to be recognized, due to some 
+	chicken-and-egg scenario where normal definition parsing could only be done 
+	once we knew what field type to parse it as, but to know the type you had to 
+	parse.  The new version removes that restriction so now you can mix the 
+	typecase of "type" as much as any other attribute as is your wish.
+	
+	* Small update to the make_table_from_list() method where the HTML code for 
+	each table cell now appears on its own line for greater readability.
+	
+	* The module POD was updated, mostly in Name, Synopsis, Properties.
+
 2001-04-03   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 2.0.
