@@ -1,3 +1,23 @@
+2001-03-18   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 1.05.
+	
+	* This release is the first one that includes the CPAN standard files 
+	"Makefile.PL", "test.pl", and "MANIFEST", which were all created following 
+	the previous release.  The content of "Manifest" was previously inside the 
+	"ReadMe" file.  Improved the install instructions in my ReadMe file.
+
+	* Note that "test.pl" is incomplete; it only tests that this module will 
+	compile but not that the methods work; it is included so that people can use 
+	the Makefile in the standard way during installation.  "test.pl" will be 
+	fleshed out during major release 2.0 of this module, coming soon.
+	
+	* This class now requires Class::ParamParser 1.03, HTML::EasyTags 1.0301, 
+	Data::MultiValuedHash 1.06, and CGI::MultiValuedHash 1.06.  I consider the 
+	first three modules to be stable and well tested, as well as unlikely to 
+	change.  The fourth module is partially tested, but production use of the 
+	other functionality finds it to be working properly.
+	
 2001-02-16   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 1.04.

@@ -17,7 +17,7 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA $AUTOLOAD);
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 ######################################################################
 
@@ -34,17 +34,17 @@ $VERSION = '1.04';
 =head2 Nonstandard Modules
 
 	Class::ParamParser 1.03
-	HTML::EasyTags 1.03
-	Data::MultiValuedHash 1.03
-	CGI::MultiValuedHash 1.03
+	HTML::EasyTags 1.0301
+	Data::MultiValuedHash 1.06
+	CGI::MultiValuedHash 1.06
 
 =cut
 
 ######################################################################
 
-use HTML::EasyTags 1.03;  # which itself inherits from CPP 1.03
+use HTML::EasyTags 1.0301;  # which itself inherits from CPP 1.03
 @ISA = qw( HTML::EasyTags );
-use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
+use CGI::MultiValuedHash 1.06;  # which itself inherits from DMVH 1.06
 
 ######################################################################
 
@@ -80,6 +80,7 @@ use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
 		$query_string = $ENV{'QUERY_STRING'};
 	} else {
 		read( STDIN, $query_string, $ENV{'CONTENT_LENGTH'} );
+		chomp( $query_string );
 	}
 	
 	my $form = HTML::FormTemplate->new();
@@ -93,6 +94,7 @@ use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
 			print MAIL "To: perl\@DarrenDuncan.net\n";
 			print MAIL "From: perl\@DarrenDuncan.net\n";
 			print MAIL "Subject: A Simple Example Submission\n";
+			print MAIL "\n";
 			print MAIL $form->make_text_input_echo()."\n";
 			close ( MAIL );
 			$mail_worked = 1;
@@ -103,20 +105,14 @@ use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
 	
 	print
 		'Content-type: text/html'."\n\n",
-		$form->prologue_tag,
-		$form->html_start, 
-		$form->head_start,
-		$form->title( 'A Simple Example' ),
-		$form->head_end, 
-		$form->body_start,
+		$form->start_html( 'A Simple Example' ),
 		$form->h1( 'A Simple Example' ),
 		$form->make_html_input_form( 1 ),
 		$form->hr,
 		$form->new_form() ? '' : $form->make_html_input_echo( 1 ),
 		$mail_worked ? "<P>Your favorites were emailed.</P>\n" : '',
 		$mail_failed ? "<P>Error emailing your favorites.</P>\n" : '',
-		$form->body_end, 
-		$form->html_end;
+		$form->end_html;
 
 =head1 DESCRIPTION
 
