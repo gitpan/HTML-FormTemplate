@@ -107,6 +107,8 @@ support issues later, so that users of my modules can help each other with them.
 
 TO DO
 
+	* Correct remaining issues related to output html so that it validates 
+	completely against W3C's XHTML spec.
 	* Add a battery of tests to ensure that the module is working properly.
 	* Allow echo reports to show the selection field labels for the user input 
 	instead of the "values" that are actually passed behind the scenes.

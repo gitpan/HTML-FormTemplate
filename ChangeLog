@@ -1,3 +1,33 @@
+2001-09-03   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 2.02.
+	
+	* This release is primarily for making the html that this class outputs more 
+	like W3C's new XHTML standard, and give it better support for stylesheets.  
+	The public interface for this module has not changed, so you can continue 
+	using it as you did before.  You are recommended to use HTML::EasyTags 1.06 
+	or later with this, though version 1.03 will still work.
+	
+	* Any code changes are mostly cosmetic.  When generating forms or reports 
+	within tables, this class now generates the table/tr/td html tags without 
+	any attributes; they used align/valign/cellspacing/cellpadding before.  
+	It is recommended that you use a stylesheet to align cell contents the way 
+	that you want, for example: 'TD {text-align: left; vertical-align: top}'.
+	
+	* All occurances of the "font" tag and their effects have been removed.  
+	What this means is that form elements which were colored before, such as 
+	each of the required/error/private flags and the error text, are now not 
+	coloured.  However, since all of these are still identifiable by their 
+	character composition, this shouldn't be a serious problem.
+	
+	* The SYNOPSIS documentation has been updated such that it's corresponding 
+	sample output has three examples: html for initial run and when Submit is 
+	clicked, plus what the generated email looks like.
+	
+	* A BUGS section has been added to the documentation near the top that 
+	mentions remaining compatability issues with the XHTML or HTML standards.  
+	However, this module's output should continue to work with web browsers.
+
 2001-06-04   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 2.01.

@@ -17,7 +17,7 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA);
-$VERSION = '2.01';
+$VERSION = '2.02';
 
 ######################################################################
 
@@ -57,12 +57,13 @@ use CGI::MultiValuedHash 1.06;
 
 	use HTML::FormTemplate;
 	use HTML::EasyTags;
-	
+
 	my @definitions = (
 		{
 			visible_title => "What's your name?",
 			type => 'textfield',
 			name => 'name',
+			is_required => 1,
 		}, {
 			visible_title => "What's the combination?",
 			type => 'checkbox_group',
@@ -78,23 +79,23 @@ use CGI::MultiValuedHash 1.06;
 			type => 'submit', 
 		},
 	);
-	
+
 	my $query_string = '';
 	read( STDIN, $query_string, $ENV{'CONTENT_LENGTH'} );
 	chomp( $query_string );
-	
+
 	my $form = HTML::FormTemplate->new();
 	$form->form_submit_url( 
-		'http://'.($ENV{'HTTP_HOST'} || 'localhost').$ENV{'SCRIPT_NAME'} );
+		'http://'.($ENV{'HTTP_HOST'} || '127.0.0.1').$ENV{'SCRIPT_NAME'} );
 	$form->field_definitions( \@definitions );
 	$form->user_input( $query_string );
-	
+
 	my ($mail_worked, $mail_failed);
 	unless( $form->new_form() ) {
 		if( open( MAIL, "|/usr/lib/sendmail -t") ) {
 			print MAIL "To: perl\@DarrenDuncan.net\n";
 			print MAIL "From: perl\@DarrenDuncan.net\n";
-			print MAIL "Subject: A Simple Example Submission\n";
+			print MAIL "Subject: A Simple Example HTML::FormTemplate Submission\n";
 			print MAIL "\n";
 			print MAIL $form->make_text_input_echo()."\n";
 			close ( MAIL );
@@ -103,18 +104,19 @@ use CGI::MultiValuedHash 1.06;
 			$mail_failed = 1;
 		}
 	}
-	
+
 	my $tagmaker = HTML::EasyTags->new();
-	
+
 	print
-		'Content-type: text/html'."\n\n",
+		"Status: 200 OK\n",
+		"Content-type: text/html\n\n",
 		$tagmaker->start_html( 'A Simple Example' ),
 		$tagmaker->h1( 'A Simple Example' ),
 		$form->make_html_input_form( 1 ),
 		$tagmaker->hr,
 		$form->new_form() ? '' : $form->make_html_input_echo( 1 ),
-		$mail_worked ? "<P>Your favorites were emailed.</P>\n" : '',
-		$mail_failed ? "<P>Error emailing your favorites.</P>\n" : '',
+		$mail_worked ? "<p>Your favorites were emailed.</p>\n" : '',
+		$mail_failed ? "<p>Error emailing your favorites.</p>\n" : '',
 		$tagmaker->end_html;
 
 =head1 DESCRIPTION
@@ -261,57 +263,157 @@ Other field types aren't intrinsically recognized, but can still be generated as
 ordinary html tags by using methods of the HTML::EasyTags class.  A list of all
 the valid field types is returned by the valid_field_type_list() method.
 
-=head1 HTML CODE FROM SYNOPSIS PROGRAM
+=head1 BUGS
 
-	Content-type: text/html
+There is a known issue where the W3C html validator has problems with the 
+generated form code, such as saying hidden fields aren't allowed where they 
+are put, as well as saying that "input" tags should be in a pair.  Hopefully a 
+solution for these issues will present itself soon and be in the next release.  
+However, web browsers like Netscape 4.08 still display the HTML properly.
 
+=head1 OUTPUT FROM SYNOPSIS PROGRAM
+
+=head2 This HTML code is from the first time the program runs:
 
 	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-	<HTML>
-	<HEAD>
-	<TITLE>A Simple Example</TITLE>
-	</HEAD>
-	<BODY>
-	<H1>A Simple Example</H1>
-	<FORM METHOD="post" ACTION="http://localhost">
-	<TABLE CELLSPACING="5">
-	<INPUT TYPE="hidden" NAME=".is_submit" VALUE="1">
-	<TR>
-	<TD VALIGN="top" ALIGN="left"></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<STRONG>What's your name?:</STRONG></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<INPUT TYPE="text" NAME="name"></TD></TR>
-	<TR>
-	<TD VALIGN="top" ALIGN="left"></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<STRONG>What's the combination?:</STRONG></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<INPUT TYPE="checkbox" NAME="words" CHECKED VALUE="eenie">eenie
-	<INPUT TYPE="checkbox" NAME="words" VALUE="meenie">meenie
-	<INPUT TYPE="checkbox" NAME="words" CHECKED VALUE="minie">minie
-	<INPUT TYPE="checkbox" NAME="words" VALUE="moe">moe</TD></TR>
-	<TR>
-	<TD VALIGN="top" ALIGN="left"></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<STRONG>What's your favorite colour?:</STRONG></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<SELECT NAME="color" SIZE="1">
-	<OPTION VALUE="red">red
-	<OPTION VALUE="green">green
-	<OPTION VALUE="blue">blue
-	<OPTION VALUE="chartreuse">chartreuse
-	</SELECT></TD></TR>
-	<TR>
-	<TD VALIGN="top" ALIGN="left"></TD>
-	<TD VALIGN="top" ALIGN="left"></TD>
-	<TD VALIGN="top" ALIGN="left">
-	<INPUT TYPE="submit" NAME="nonamefield001"></TD></TR>
-	</TABLE>
-	</FORM>
-	<HR>
-	</BODY>
-	</HTML>
+	<html>
+	<head>
+	<title>A Simple Example</title>
+	</head>
+	<body>
+	<h1>A Simple Example</h1>
+	<form method="post" action="http://nyxmydomain/dir/script.pl">
+	<table>
+	<input type="hidden" name=".is_submit" value="1" />
+	<tr>
+	<td>
+	*</td> 
+	<td>
+	<strong>What's your name?:</strong></td> 
+	<td>
+	<input type="text" name="name" /></td></tr>
+
+	<tr>
+	<td></td> 
+	<td>
+	<strong>What's the combination?:</strong></td> 
+	<td>
+	<input type="checkbox" name="words" checked="1" value="eenie" />eenie
+	<input type="checkbox" name="words" value="meenie" />meenie
+	<input type="checkbox" name="words" checked="1" value="minie" />minie
+	<input type="checkbox" name="words" value="moe" />moe</td></tr>
+
+	<tr>
+	<td></td> 
+	<td>
+	<strong>What's your favorite colour?:</strong></td> 
+	<td>
+	<select name="color" size="1">
+	<option value="red" />red
+	<option value="green" />green
+	<option value="blue" />blue
+	<option value="chartreuse" />chartreuse
+	</select></td></tr>
+
+	<tr>
+	<td></td> 
+	<td></td> 
+	<td>
+	<input type="submit" name="nonamefield001" /></td></tr>
+
+	</table>
+	</form>
+	<hr />
+	</body>
+	</html>
+
+=head2 This HTML code is the result page of clicking the submit button:
+
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+	<html>
+	<head>
+	<title>A Simple Example</title>
+	</head>
+	<body>
+	<h1>A Simple Example</h1>
+	<form method="post" action="http://nyxmydomain/dir/script.pl">
+	<table>
+	<input type="hidden" name=".is_submit" value="1" />
+	<tr>
+	<td>
+	*</td> 
+	<td>
+	<strong>What's your name?:</strong></td> 
+	<td>
+	<input type="text" name="name" value="This Is My Name" /></td></tr>
+
+	<tr>
+	<td></td> 
+	<td>
+	<strong>What's the combination?:</strong></td> 
+	<td>
+	<input type="checkbox" name="words" checked="1" value="eenie" />eenie
+	<input type="checkbox" name="words" value="meenie" />meenie
+	<input type="checkbox" name="words" checked="1" value="minie" />minie
+	<input type="checkbox" name="words" value="moe" />moe</td></tr>
+
+	<tr>
+	<td></td> 
+	<td>
+	<strong>What's your favorite colour?:</strong></td> 
+	<td>
+	<select name="color" size="1">
+	<option selected="1" value="red" />red
+	<option value="green" />green
+	<option value="blue" />blue
+	<option value="chartreuse" />chartreuse
+	</select></td></tr>
+
+	<tr>
+	<td></td> 
+	<td></td> 
+	<td>
+	<input type="submit" name="nonamefield001" value="Submit Query" /></td></tr>
+
+	</table>
+	</form>
+	<hr />
+	<table>
+	<tr><td>
+	<strong>What's your name?:</strong></td> <td>This Is My Name</td></tr>
+	<tr><td>
+	<strong>What's the combination?:</strong></td> <td>eenie<br />minie</td></tr>
+	<tr><td>
+	<strong>What's your favorite colour?:</strong></td> <td>red</td></tr>
+	</table><p>Your favorites were emailed.</p>
+
+	</body>
+	</html>
+
+=head2 This text is the content of the email message that the program sent:
+
+	Date: Mon, 3 Sep 2001 13:28:19 -0700
+	To: perl@DarrenDuncan.net
+	From: perl@DarrenDuncan.net
+	Subject: A Simple Example HTML::FormTemplate Submission
+
+
+	Q: What's your name?
+
+	This Is My Name
+
+	******************************
+
+	Q: What's the combination?
+
+	eenie
+	minie
+
+	******************************
+
+	Q: What's your favorite colour?
+
+	red
 
 =cut
 
@@ -623,15 +725,15 @@ sub initialize {
 	$self->{$KEY_IS_SUBMIT} = '.is_submit';
 	$self->{$KEY_DEF_FF_TYPE} = 'textfield';
 	$self->{$KEY_DEF_FF_NAME} = 'nonamefield';
-	$self->{$KEY_SUBMIT_URL} = 'http://localhost';
+	$self->{$KEY_SUBMIT_URL} = 'http://127.0.0.1';
 	$self->{$KEY_SUBMIT_MET} = 'post';
 	$self->{$KEY_FIELD_DEFNA} = [];
 	$self->{$KEY_NORMALIZED} = 0;
 	$self->{$KEY_FIELD_RENDE} = undef;
 	$self->{$KEY_FIELD_INVAL} = undef;
-	$self->{$KEY_INVAL_MARK} = '<FONT COLOR="#ff0000">?</FONT>';
-	$self->{$KEY_ISREQ_MARK} = '<FONT COLOR="#0000ff">*</FONT>';
-	$self->{$KEY_PRIVA_MARK} = '<FONT COLOR="#00ff00">~</FONT>';
+	$self->{$KEY_INVAL_MARK} = '?';
+	$self->{$KEY_ISREQ_MARK} = '*';
+	$self->{$KEY_PRIVA_MARK} = '~';
 	$self->{$KEY_EMP_ECH_STR} = '';
 }
 
@@ -1155,7 +1257,7 @@ placeholders above, except they must be in lower case.  The two arguments, METHO
 and ACTION, are scalars which respectively define the method that the form are
 submitted with and the URL it is submitted to.  If either argument is undefined,
 then the appropriate scalar properties of this object are used instead, and their
-defaults are "POST" for METHOD and "localhost" for ACTION.  See the
+defaults are "POST" for METHOD and "127.0.0.1" for ACTION.  See the
 form_submit_url() and form_submit_method() methods to access these properties.
 
 =cut
@@ -1196,7 +1298,7 @@ sub end_form {
 This method is an accessor for the scalar "submit url" property of this object,
 which it returns.  If VALUE is defined, this property is set to it.  This
 property defines the URL of a processing script that the web browser would use to
-process the generated form.  The default value is "localhost".
+process the generated form.  The default value is "127.0.0.1".
 
 =cut
 
@@ -1576,7 +1678,7 @@ sub make_html_input_form {
 	
 	push( @input_form, $self->start_form() );
 	if( $in_table_format ) {
-		push( @input_form, "\n<TABLE CELLSPACING=\"5\">" );
+		push( @input_form, "\n<table>" );
 	}
 
 	foreach my $defin (@{$self->{$KEY_FIELD_DEFNA}}) {
@@ -1603,21 +1705,21 @@ sub make_html_input_form {
 				$flags_html .= "\n$self->{$KEY_PRIVA_MARK}";
 			}
 			
-			$label_html .= "\n<STRONG>" .
-				$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</STRONG>";
+			$label_html .= "\n<strong>" .
+				$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</strong>";
 			if( my $hm = $defin->fetch_value( $FKEY_HELP_MESSAGE ) ) {
 				if( $in_table_format ) {
-					$label_html .= "<BR>";
+					$label_html .= "<br />";
 				}
-				$label_html .= "\n<SMALL>($hm)</SMALL>";
+				$label_html .= "\n<small>($hm)</small>";
 			}
 
 			if( $rh_invalid->{$name} ) {
-				$error_html .= "\n<SMALL><FONT COLOR=\"#ff0000\">" .
+				$error_html .= "\n<small>" .
 					$defin->fetch_value( $FKEY_ERROR_MESSAGE ) . 
-					"</FONT></SMALL>";
+					"</small>";
 				if( $in_table_format ) {
-					$error_html .= "<BR>";
+					$error_html .= "<br />";
 				}
 			}
 		}
@@ -1629,29 +1731,24 @@ sub make_html_input_form {
 		my $str_below = $defin->fetch_value( $FKEY_STR_BELOW_INPUT );
 		
 		if( $in_table_format ) {
-			my $row_cells = $tagmaker->td_group( 
-				valign => 'top', 
-				align => 'left', 
-				text => [ $flags_html, $label_html, 
-					$error_html.$str_above.$field_html.$str_below ]
-			);
-			push( @input_form, "\n<TR>$row_cells</TR>" );
+			push( @input_form, <<__endquote );
+\n<tr>
+<td>$flags_html</td> 
+<td>$label_html</td> 
+<td>$error_html$str_above$field_html$str_below</td></tr>
+__endquote
 		} else {
 			push( @input_form, <<__endquote );
-<P>
+\n<p>
 $flags_html 
 $label_html 
-$error_html 
-$str_above
-$field_html
-$str_below
-</P>
+$error_html$str_above$field_html$str_below</p>
 __endquote
 		}
 	}
 
 	if( $in_table_format ) {
-		push( @input_form, "\n</TABLE>" );
+		push( @input_form, "\n</table>" );
 	}
 	push( @input_form, $self->end_form() );
 
@@ -1665,7 +1762,7 @@ __endquote
 This method is an accessor for the string "invalid input marker" property of
 this object, which it returns.  If VALUE is defined, this property is set to it. 
 This string is used to visually indicate in which form fields the user has 
-entered invalid input.  It defaults to a red question mark ("?").
+entered invalid input.  It defaults to a question mark ("?").
 
 =cut
 
@@ -1687,7 +1784,7 @@ This method is an accessor for the string "required field marker" property of
 this object, which it returns.  If VALUE is defined, this property is set to it. 
 This string is used to visually indicate which form fields are required, and 
 must be filled in by users for the form to be processed.  It defaults to 
-a blue asterisk ("*").
+an asterisk ("*").
 
 =cut
 
@@ -1709,7 +1806,7 @@ This method is an accessor for the string "private field marker" property of
 this object, which it returns.  If VALUE is defined, this property is set to it. 
 This string is used to visually indicate which form fields are meant to be 
 private, meaning their content won't be shown to the public.  It defaults to 
-a green tilde ("~").
+a tilde ("~").
 
 =cut
 
@@ -1761,7 +1858,7 @@ sub make_html_input_echo {
 	my $tagmaker = $self->{$KEY_TAG_MAKER};
 	
 	if( $in_table_format ) {
-		push( @input_echo, "\n<TABLE CELLSPACING=\"5\">" );
+		push( @input_echo, "\n<table>" );
 	}
 
 	foreach my $defin (@{$self->{$KEY_FIELD_DEFNA}}) {
@@ -1778,27 +1875,23 @@ sub make_html_input_echo {
 			next;
 		}
 		
-		my $field_title = "\n<STRONG>" .
-			$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</STRONG>";
+		my $field_title = "\n<strong>" .
+			$defin->fetch_value( $FKEY_VISIBLE_TITLE ) . ":</strong>";
 
 		my @input = grep { $_ ne '' } $user_input->fetch( $name );
 		scalar( @input ) or @input = $empty_field_str;
-		my $user_input_str = join( $in_table_format ? '<BR>' : ', ', @input );
+		my $user_input_str = join( $in_table_format ? '<br />' : ', ', @input );
 
 		if( $in_table_format ) {
-			my $row_cells = $tagmaker->td_group( 
-				valign => 'top', 
-				align => 'left', 
-				text => [ $field_title, $user_input_str ]
-			);
-			push( @input_echo, "\n<TR>$row_cells</TR>" );
+			push( @input_echo, 
+				"\n<tr><td>$field_title</td> <td>$user_input_str</td></tr>" );
 		} else {
-			push( @input_echo, "<P>$field_title $user_input_str</P>" );
+			push( @input_echo, "\n<p>$field_title $user_input_str</p>" );
 		}
 	}
 
 	if( $in_table_format ) {
-		push( @input_echo, "\n</TABLE>" );
+		push( @input_echo, "\n</table>" );
 	}
 
 	return( $force_list ? \@input_echo : join( '', @input_echo ) );
@@ -2031,24 +2124,24 @@ sub make_table_from_list {
 	# Option one is to arrange the source elements across first and then down.
 	
 	if( $acr_first ) {
-		push( @table_lines, "<TABLE>\n" );
+		push( @table_lines, "<table>\n" );
 		foreach my $row_num (1..$max_rows) {
 			my @row_source = splice( @source, 0, $max_cols ) or last;
-			my @row_lines = map { "<TD>$_</TD>" } @row_source;
-			push( @table_lines, "<TR>\n".join( "\n", @row_lines )."\n</TR>\n" );
+			my @row_lines = map { "<td>$_</td>" } @row_source;
+			push( @table_lines, "<tr>\n".join( "\n", @row_lines )."\n</tr>\n" );
 		}
-		push( @table_lines, "</TABLE>\n" );
+		push( @table_lines, "</table>\n" );
 
 	# Option two is to arrange the source elements down first and then across.
 
 	} else {
-		push( @table_lines, "<TABLE>\n<TR>\n" );
+		push( @table_lines, "<table>\n<tr>\n" );
 		foreach my $col_num (1..$max_cols) {
 			my @cell_source = splice( @source, 0, $max_rows ) or last;
 			push( @table_lines, 
-				"<TD>\n".join( "<BR>\n", @cell_source )."\n</TD>\n" );
+				"<td>\n".join( "<br />\n", @cell_source )."\n</td>\n" );
 		}
-		push( @table_lines, "</TR>\n</TABLE>\n" );
+		push( @table_lines, "</tr>\n</table>\n" );
 	}
 
 	return( join( '', @table_lines ) );
@@ -2532,7 +2625,7 @@ sub _make_select_group_html {
 # finds one that is true; it then joins the fields in accordance with that one.
 # These are the properties in order of precedence: 1. 'list' causes the LIST 
 # elements to be returned as is (in an array ref), one field per element; 
-# 2. 'linebreak' creates a scalar with group members delimited by <BR> tags; 
+# 2. 'linebreak' creates a scalar with group members delimited by <br /> tags; 
 # 3. 'table_cols' or 'table_rows' causes the group members to be formatted into 
 # an HTML table, returned as a scalar; 4. otherwise, we join on ''.
 
@@ -2546,7 +2639,7 @@ sub _join_field_group_html {
 	# Second, see if definition wants linebreak-delimited fields.
 	
 	$defin->fetch_value( $FKEY_LINEBREAK ) and 
-		return( join( '<BR>', @{$ra_tag_html} ) );
+		return( join( '<br />', @{$ra_tag_html} ) );
 		
 	# Third, see if definition wants fields returned in an HTML table.
 	
@@ -2665,7 +2758,7 @@ fields in any way you choose, rather than only the ways this class understands.
 
 When this boolean argument is true, methods that make form field groups will 
 join the html for all group members into a string with the members being 
-delimited by linebreaks, that is, '<BR>' tags.
+delimited by linebreaks, that is, '<br />' tags.
 
 =head2 table_cols, table_rows, table_acrf
 
@@ -2678,7 +2771,7 @@ radio_group only, you can use COLS/COLUMNS and ROWS as aliases for the first two
 =head1 PROPERTIES FOR USER-INPUT VALIDATION
 
 In cases where user input has been evaluated to be in error, a visual cue is
-provided to the user in the form of a red question mark ("?") that this is so. 
+provided to the user in the form of a question mark ("?") that this is so. 
 You need to make your own legend explaining this where appropriate.
 See bad_input_marker().  Note that any empty strings are filtered from the 
 user input prior to any validation checks are done.
@@ -2687,7 +2780,7 @@ user input prior to any validation checks are done.
 
 This boolean property is an assertion that the field must be filled in by the 
 user, or otherwise there is an error condition.  A visual cue is provided to 
-the user in the form of a blue asterisk ("*") that this is so.  You need to make
+the user in the form of an asterisk ("*") that this is so.  You need to make
 your own legend explaining this where appropriate.  See required_field_marker().
 
 =head2 req_min_count, req_max_count
@@ -2739,7 +2832,7 @@ parenthesis.
 This string is an optional sentance or three that only
 appears when the user didn't enter invalid input.  It helps the user further,
 such as explaining what they did wrong or giving examples of valid input.  It is
-printed in smaller type and is colored red.
+printed in smaller type.
 
 =head2 str_above_input
 
@@ -2756,7 +2849,7 @@ store a </DIV> tag below the field.
 =head2 is_private
 
 This boolean property results in a visual cue provided to the user in the form
-of a green tilde ("~"), that you don't intend to make the contents of that field
+of a tilde ("~"), that you don't intend to make the contents of that field
 public.  You need to make your own legend explaining this where appropriate.
 See private_field_marker().
 
@@ -2795,7 +2888,7 @@ html, then the html methods will behave like those in CGI.pm do when instantiate
 with a query string, or automatically, or when the "params" were otherwise
 manipulated.  The caller must provide the url that the form submits to, usually
 with the form_submit_url() accessor method, or the default for this value is 
-"localhost".  That method must be used prior to methods that generate entire
+"127.0.0.1".  That method must be used prior to methods that generate entire
 forms, in order for them to work as desired.  By contrast, CGI.pm uses the
 current script's url as the default.  Of course, if you build forms
 piece-by-piece and call start_form() yourself, you can give it the "action"
