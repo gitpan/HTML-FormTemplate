@@ -1,3 +1,27 @@
+2001-01-30   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 1.03.
+	
+	* This release is entirely for fixing bugs in the coding and the POD.
+	
+	* Fixed bug where providing a Hash ref as a "labels" parameter for 
+	radio/field groups doesn't work (acts like explicit labels not provided and 
+	uses values as labels).  Fixed a similar bug that afflicted the "defaults"
+	parameter.  This is the last of the "bugs" that I know of.
+	
+	* Fixed bugs in POD that caused display problems with it, including:
+		- Description section too long; now split into itself and Overview.
+		- Ensured a blank line between Synopsis and Description.
+		- Likewise between "HTML Code..." and "Field Types...".
+		- Changed several bulleted lists whose first word of text was boldfaced 
+		into numbered lists; before, some strangeness caused all the text of the 
+		bulleted lists to be boldfaced and in one paragraph and/or strangely 
+		indented in CPAN's HTML version; these should be fixed.
+	
+	* Thanks to Geir Johannessen <geir.johannessen@nextra.com> for alerting me to 
+	several obscure bugs in my POD (the first three); these only showed up when 
+	manifying, whereas MacPerl's Shuck and CPAN's HTMLizer rendered it properly.
+	
 2001-01-05   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 1.02.

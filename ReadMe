@@ -49,6 +49,11 @@ All of my modules require Perl 5.004 or newer, even though only some of them nee
 it, in the interest of consistency.  Modules in this distribution require modules 
 in these following distributions:
 
+Class-ParamParser-1.01.tar.gz
+	- by Darren Duncan (DUNCAND)
+	- Class::ParamParser 1.01 is required by:
+		- HTML::FormTemplate (as a parent class; parses method arguments)
+
 HTML-EasyTags-1.02.tar.gz
 	- by Darren Duncan (DUNCAND)
 	- HTML::EasyTags 1.02 is required by:
@@ -81,6 +86,9 @@ another person whom you know has used this.
 
 TO DO
 
+	* Completely redo the module in terms of design and structure; add a wealth 
+	of new features; make existing features easier to use; better documentation, 
+	leverage existing code as much as possible.  (Below are a few ideas.)
 	* Add a Make File to the distribution.
 	* Add testing scripts.
 	* Add field attribute readonly, allowing once-editable field data to share 
@@ -93,10 +101,6 @@ TO DO
 	than requiring that they are all defined at once.
 	* Customize validation error messages so they give a better idea what about 
 	the entry was inappropriate (eg: wrong number of selections).
-	* Fix bug where providing a Hash ref as a "labels" parameter for radio/field 
-	groups doesn't work (acts like explicit labels not provided and uses values 
-	as labels).  In the meantime, using an Array ref for that parameter works 
-	fine, so I suggest using it instead.
 	* Make a utility program that utilizes this module's abilities to let users 
 	create form definitions for it with a web browser.
 

@@ -17,7 +17,7 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA $AUTOLOAD);
-$VERSION = '1.02';
+$VERSION = '1.03';
 
 ######################################################################
 
@@ -33,16 +33,18 @@ $VERSION = '1.02';
 
 =head2 Nonstandard Modules
 
+	Class::ParamParser 1.01
 	HTML::EasyTags 1.02
+	Data::MultiValuedHash 1.03
 	CGI::MultiValuedHash 1.03
 
 =cut
 
 ######################################################################
 
-use HTML::EasyTags 1.02;
+use HTML::EasyTags 1.02;  # which itself inherits from CPP 1.01
 @ISA = qw( HTML::EasyTags );
-use CGI::MultiValuedHash 1.03;
+use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
 
 ######################################################################
 
@@ -115,7 +117,7 @@ use CGI::MultiValuedHash 1.03;
 		$mail_failed ? "<P>Error emailing your favorites.</P>\n" : '',
 		$form->body_end, 
 		$form->html_end;
-	
+
 =head1 DESCRIPTION
 
 This Perl 5 object class can create web fill-out forms as well as parse,
@@ -129,6 +131,8 @@ For that reason, a form can be generated multiple times, each with a single
 function call, while the form only has to be defined once.  Form descriptions can
 optionally be read from a file by the calling code, making that code a lot more
 generic and robust than code which had to define the field manually.
+
+=head1 OVERVIEW
 
 If the calling code provides a MultiValuedHash object or HASH ref containing the
 parsed user input from the last time the form was submitted, via user_input(),
@@ -205,7 +209,7 @@ and inherits all of their methods.
 	<HR>
 	</BODY>
 	</HTML>
-	
+
 =head1 RECOGNIZED FORM FIELD TYPES
 
 This class recognizes 10 form field types, and a complete field of that type can
@@ -218,25 +222,45 @@ Standalone fields of the following types are recognized:
 
 =over 4
 
-=item B<reset> - makes a reset button
+=item 0
 
-=item B<submit> - makes a submit button
+B<reset> - makes a reset button
 
-=item B<hidden> - makes a hidden field, which the user won't see
+=item 0
 
-=item B<textfield> - makes a text entry field, one row high
+B<submit> - makes a submit button
 
-=item B<password_field> - same as textfield except contents are bulleted out
+=item 0
 
-=item B<textarea> - makes a big text entry field, several rows high
+B<hidden> - makes a hidden field, which the user won't see
 
-=item B<checkbox> - makes a standalone check box
+=item 0
 
-=item B<radio> - makes a standalone radio button
+B<textfield> - makes a text entry field, one row high
 
-=item B<popup_menu> - makes a popup menu, one item can be selected at once
+=item 0
 
-=item B<scrolling_list> - makes a scrolling list, multiple selections possible
+B<password_field> - same as textfield except contents are bulleted out
+
+=item 0
+
+B<textarea> - makes a big text entry field, several rows high
+
+=item 0
+
+B<checkbox> - makes a standalone check box
+
+=item 0
+
+B<radio> - makes a standalone radio button
+
+=item 0
+
+B<popup_menu> - makes a popup menu, one item can be selected at once
+
+=item 0
+
+B<scrolling_list> - makes a scrolling list, multiple selections possible
 
 =back
 
@@ -244,17 +268,29 @@ Groups of related fields of the following types are recognized:
 
 =over 4
 
-=item B<hidden_group> - makes a group of related hidden fields
+=item 0
 
-=item B<textfield_group> - makes a group of related text entry fields
+B<hidden_group> - makes a group of related hidden fields
 
-=item B<password_field_group> - makes a group of related password fields
+=item 0
 
-=item B<textarea_group> - makes a group of related big text entry fields
+B<textfield_group> - makes a group of related text entry fields
 
-=item B<checkbox_group> - makes a group of related checkboxes
+=item 0
 
-=item B<radio_group> - makes a group of related radio buttons
+B<password_field_group> - makes a group of related password fields
+
+=item 0
+
+B<textarea_group> - makes a group of related big text entry fields
+
+=item 0
+
+B<checkbox_group> - makes a group of related checkboxes
+
+=item 0
+
+B<radio_group> - makes a group of related radio buttons
 
 =back
 
@@ -575,38 +611,52 @@ form or echoing report at once, or when it does user input checking:
 
 =over 4
 
-=item B<is_required> - boolean - An assertion that the field must be filled in by
+=item 0
+
+B<is_required> - boolean - An assertion that the field must be filled in by
 the user, or otherwise there is an error condition.  A visual cue is provided to
 the user in the form of a blue asterisk ("*"), that this is so.  You need to make
 your own legend explaining this where appropriate.
 
-=item B<is_private> - boolean - A visual cue is provided to the user in the form
+=item 0
+
+B<is_private> - boolean - A visual cue is provided to the user in the form
 of a green tilde ("~"), that you don't intend to make the contents of that field
 public.  You need to make your own legend explaining this where appropriate.
 
-=item B<validation_rule> - string - A Perl 5 regular expression that is applied
+=item 0
+
+B<validation_rule> - string - A Perl 5 regular expression that is applied
 to user input, and if it evaluates to false then an error condition is present.  
 In cases where user input has been evaluated to be in error, a visual cue is
 provided to the user in the form of a red question mark ("?"), that this is so. 
 You need to make your own legend explaining this where appropriate.
 
-=item B<visible_title> - string - This is the "name" or "question" or "prompt"
+=item 0
+
+B<visible_title> - string - This is the "name" or "question" or "prompt"
 that is visually associated with a form field or field group that lets the user
 know what the field is for.  It is printed in bold type with a colon (":")
 appended on the end.  This title is also used with the input echo reports, as a
 label or heading for each piece of user input.
 
-=item B<help_message> - string - This is an optional sentance or three that helps
+=item 0
+
+B<help_message> - string - This is an optional sentance or three that helps
 the user further, such as explaining the reason for this' fields existence, or by
 providing examples of valid input.  It is printed in smaller type and enclosed in
 parenthesis.
 
-=item B<error_message> - string - This is an optional sentance or three that only
+=item 0
+
+B<error_message> - string - This is an optional sentance or three that only
 appears when the user didn't enter invalid input.  It helps the user further,
 such as explaining what they did wrong or giving examples of valid input.  It is
 printed in smaller type and is colored red.
 
-=item B<exclude_in_echo> - boolean - An assertion that this field's value will
+=item 0
+
+B<exclude_in_echo> - boolean - An assertion that this field's value will
 never be shown when reports are generated.  This provides an alternative to the
 more messy redefining of the form field definitions that would otherwise be
 required to exclude fields that aren't private or hidden or buttons.  Normally
@@ -657,45 +707,79 @@ one on the very left of alias names for a field:
 
 =over 4
 
-=item B<type> - string - What field type this is.  Same as the method names.
+=item 0
 
-=item B<name> - string - Name for the field that the browser/script cares about.
+B<type> - string - What field type this is.  Same as the method names.
 
-=item B<defaults> - array - Optional default values for multi-valued fields.
+=item 0
 
-=item B<default> - scalar - Same as B<defaults> except for single-valued fields.
+B<name> - string - Name for the field that the browser/script cares about.
 
-=item B<values> - array - Required values for selection-type fields, that the 
+=item 0
+
+B<defaults> - array - Optional default values for multi-valued fields.
+
+=item 0
+
+B<default> - scalar - Same as B<defaults> except for single-valued fields.
+
+=item 0
+
+B<values> - array - Required values for selection-type fields, that the 
 browser/script care about, including checkbox, radio, popup menu, scrolling list.
 
-=item B<value> - scalar - Same as B<value> except for single-valued fields.
+=item 0
 
-=item B<size> - number - Two possibilities:
+B<value> - scalar - Same as B<value> except for single-valued fields.
+
+=item 0
+
+B<size> - number - Two possibilities:
 1. Visible width of text entry fields in characters.
 2. Visible height of scrolling list in characters.
 
-=item B<maxlength> - number - Maximum characters that can be in text fields.
+=item 0
 
-=item B<rows> - number - Height of textarea fields in characters.
+B<maxlength> - number - Maximum characters that can be in text fields.
 
-=item B<cols> - number - Width of textarea fields in characters.
+=item 0
 
-=item B<multiple> - boolean - User may choose several scrolling list items?
+B<rows> - number - Height of textarea fields in characters.
 
-=item B<labels> - array - User-visible text that appears in selection-type 
+=item 0
+
+B<cols> - number - Width of textarea fields in characters.
+
+=item 0
+
+B<multiple> - boolean - User may choose several scrolling list items?
+
+=item 0
+
+B<labels> - array - User-visible text that appears in selection-type 
 fields; these elements correspond to elements in the B<values> argument.
 If this argument is not provided, the actual B<values> are used as labels.
 
-=item B<label> - array - Same as B<labels> but for single-valued fields.
+=item 0
 
-=item B<nolabels> - boolean - Suppresses any field value labels from showing.
+B<label> - array - Same as B<labels> but for single-valued fields.
 
-=item B<override> - boolean - Ensures that B<default> values are always used 
+=item 0
+
+B<nolabels> - boolean - Suppresses any field value labels from showing.
+
+=item 0
+
+B<override> - boolean - Ensures that B<default> values are always used 
 instead of persistant user input.
 
-=item B<linebreak> - boolean - Delimit members of field groups with linebreak?
+=item 0
 
-=item B<list> - boolean - Force field group html to be returned as an array ref 
+B<linebreak> - boolean - Delimit members of field groups with linebreak?
+
+=item 0
+
+B<list> - boolean - Force field group html to be returned as an array ref 
 rather than a string, with the html for each field in a separate array element.  
 This lets you delimit the fields in any way you choose.  This option can cause 
 strange results when used with the methods that return a whole form at once, so
@@ -782,7 +866,7 @@ use it with care.
 	
 	NAME
 	[DEFAULTS or DEFAULT or VALUES or VALUE]
-	LIST - method returns array ref with one field per element
+	LIST
 
 =head2 textfield_group( NAME, DEFAULTS, LINEBREAK, SIZE, MAXLENGTH )
 	
@@ -792,7 +876,7 @@ use it with care.
 	MAXLENGTH
 	[OVERRIDE or FORCE]
 	LINEBREAK
-	LIST - method returns array ref with one field per element
+	LIST
 
 =head2 password_field_group( NAME, DEFAULTS, LINEBREAK, SIZE, MAXLENGTH )
 	
@@ -802,7 +886,7 @@ use it with care.
 	MAXLENGTH
 	[OVERRIDE or FORCE]
 	LINEBREAK
-	LIST - method returns array ref with one field per element
+	LIST
 
 =head2 textarea_group( NAME, DEFAULTS, LINEBREAK, ROWS, COLS )
 	
@@ -812,7 +896,7 @@ use it with care.
 	[COLS or COLUMNS]
 	[OVERRIDE or FORCE]
 	LINEBREAK
-	LIST - method returns array ref with one field per element
+	LIST
 
 =head2 checkbox_group( NAME, VALUES, DEFAULTS, LINEBREAK, LABELS )
 	
@@ -823,7 +907,7 @@ use it with care.
 	[NOLABELS or NOLABEL]
 	[OVERRIDE or FORCE]
 	LINEBREAK
-	LIST - method returns array ref with one field per element
+	LIST
 
 =head2 radio_group( NAME, VALUES, DEFAULTS, LINEBREAK, LABELS )
 	
@@ -834,7 +918,7 @@ use it with care.
 	[NOLABELS or NOLABEL]
 	[OVERRIDE or FORCE]
 	LINEBREAK
-	LIST - method returns array ref with one field per element
+	LIST
 
 =cut
 
@@ -1817,6 +1901,12 @@ sub make_input_tag {
 		$rh_params->{'size'} ||= scalar( @{$ra_values} );
 	
 		my $ra_text = delete( $rh_params->{$FKEY_TEXT} );
+
+		# bug fix because internal MVH forces hash values into first array elem
+		if( ref( $ra_text ) eq 'ARRAY' and ref( $ra_text->[0] ) eq 'HASH' ) {
+			$ra_text = $ra_text->[0];  # this parameter was actually a hash
+		}
+
 		if( ref( $ra_text ) eq 'HASH' ) {
 			$ra_text = [map { $ra_text->{$_} } @{$ra_values}];
 		} elsif( ref( $ra_text ) ne 'ARRAY' ) {
@@ -1829,6 +1919,12 @@ sub make_input_tag {
 		}
 
 		my $rh_default = delete( $rh_params->{$FKEY_DEFAULT} );
+
+		# bug fix because internal MVH forces hash values into first array elem
+		if( ref( $rh_default ) eq 'ARRAY' and ref( $rh_default->[0] ) eq 'HASH' ) {
+			$rh_default = $rh_default->[0];  # this parameter was actually a hash
+		}
+
 		unless( delete( $rh_params->{$FKEY_OVERRIDE} ) or 
 				$self->{$KEY_NEW_FORM} ) {
 			$rh_default = $ra_user_values;
@@ -1914,6 +2010,14 @@ sub make_input_tag_group {
 		my $ra_default = delete( $rh_params->{$FKEY_DEFAULT} );
 		my $force_list = delete( $rh_params->{$FKEY_LIST} );
 		my $is_linebreak = delete( $rh_params->{'linebreak'} );
+
+		# bug fix because internal MVH forces hash values into first array elem
+		if( ref( $ra_text ) eq 'ARRAY' and ref( $ra_text->[0] ) eq 'HASH' ) {
+			$ra_text = $ra_text->[0];  # this parameter was actually a hash
+		}
+		if( ref( $ra_default ) eq 'ARRAY' and ref( $ra_default->[0] ) eq 'HASH' ) {
+			$ra_default = $ra_default->[0];  # this parameter was actually a hash
+		}
 
 		if( $input_name eq 'checkbox' or $input_name eq 'radio' ) {
 			ref( $ra_values ) eq 'ARRAY' or $ra_values = [$ra_values];
@@ -2210,6 +2314,10 @@ Thanks to B<Lincoln D. Stein> for setting a good interface standard in the
 HTML-related methods of his CGI.pm module.  I was heavily influenced by his
 interfaces when designing my own.  Thanks also because I borrowed ideas for my
 Synopsis program from his aforementioned module.
+
+Thanks to Geir Johannessen <geir.johannessen@nextra.com> for alerting me to 
+several obscure bugs in my POD; these only showed up when manifying, whereas 
+MacPerl's Shuck and CPAN's HTMLizer rendered it properly.
 
 =head1 SEE ALSO
 
