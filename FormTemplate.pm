@@ -17,7 +17,7 @@ require 5.004;
 
 use strict;
 use vars qw($VERSION @ISA $AUTOLOAD);
-$VERSION = '1.03';
+$VERSION = '1.04';
 
 ######################################################################
 
@@ -33,8 +33,8 @@ $VERSION = '1.03';
 
 =head2 Nonstandard Modules
 
-	Class::ParamParser 1.01
-	HTML::EasyTags 1.02
+	Class::ParamParser 1.03
+	HTML::EasyTags 1.03
 	Data::MultiValuedHash 1.03
 	CGI::MultiValuedHash 1.03
 
@@ -42,7 +42,7 @@ $VERSION = '1.03';
 
 ######################################################################
 
-use HTML::EasyTags 1.02;  # which itself inherits from CPP 1.01
+use HTML::EasyTags 1.03;  # which itself inherits from CPP 1.03
 @ISA = qw( HTML::EasyTags );
 use CGI::MultiValuedHash 1.03;  # which itself inherits from DMVH 1.03
 
@@ -301,6 +301,11 @@ the valid field types is returned by the valid_field_type_list() method.
 =cut
 
 ######################################################################
+
+# Names of properties for objects of this class are declared here:
+my $KEY_AUTO_POSIT = 'auto_posit';  # with methods whose parameters 
+	# could be either named or positional, when we aren't sure what we 
+	# are given, do we guess positional?  Default is named.
 
 # Names of properties for objects of this class are declared here:
 my $KEY_FIELD_DEFN = 'field_defn';  # instruc for how to make form fields
@@ -977,6 +982,7 @@ sub initialize {
 
 	$self->SUPER::initialize( @_ );
 
+	$self->{$KEY_AUTO_POSIT} = 0;
 	$self->{$KEY_FIELD_DEFN} = [];
 	$self->{$KEY_NORMALIZED} = 0;
 	$self->reset_to_new_form();
@@ -1004,6 +1010,8 @@ sub clone {
 	ref($clone) eq ref($self) or $clone = bless( {}, ref($self) );
 	$clone = $self->SUPER::clone( $clone );	 # HTML::EasyTags
 
+	$clone->{$KEY_AUTO_POSIT} = $self->{$KEY_AUTO_POSIT};
+
 	$clone->{$KEY_FIELD_DEFN} = 
 		{map {$_->clone()} @{$self->{$KEY_FIELD_DEFN}}};
 	$clone->{$KEY_NORMALIZED} = $self->{$KEY_NORMALIZED};
@@ -1020,6 +1028,27 @@ sub clone {
 	$clone->{$KEY_SUBMIT_MET} = $self->{$KEY_SUBMIT_MET};
 	
 	return( $clone );
+}
+
+######################################################################
+
+=head2 positional_by_default([ VALUE ])
+
+This method is an accessor for the boolean "positional arguments" property of
+this object, which it returns.  If VALUE is defined, this property is set to it. 
+With methods whose parameters could be either named or positional, when we aren't
+sure what we are given, do we guess positional?  Default is named.
+
+=cut
+
+######################################################################
+
+sub positional_by_default {
+	my $self = shift( @_ );
+	if( defined( my $new_value = shift( @_ ) ) ) {
+		$self->{$KEY_AUTO_POSIT} = $new_value;
+	}
+	return( $self->{$KEY_AUTO_POSIT} );
 }
 
 ######################################################################
@@ -1789,7 +1818,7 @@ form_submit_url() and form_submit_method() methods to access these properties.
 sub start_form {
 	my $self = shift( @_ );
 	my $rh_params = $self->params_to_hash( \@_, 
-		$self->positional_by_default(), ['method', 'action'] );
+		$self->{$KEY_AUTO_POSIT}, ['method', 'action'] );
 	$rh_params->{'method'} ||= $self->{$KEY_SUBMIT_MET};
 	$rh_params->{'action'} ||= $self->{$KEY_SUBMIT_URL};
 	return( $self->make_html_tag( 'form', $rh_params, undef, $TAG_START ) );
@@ -1841,7 +1870,7 @@ sub make_input_tag {
 	my $input_name = lc(shift( @_ ));
 	my $ra_params = shift( @_ );
 	my $rh_params = $self->params_to_hash( $ra_params,
-		$self->positional_by_default(), @{$INPUT_MPP_ARGS{$input_name}} );
+		$self->{$KEY_AUTO_POSIT}, @{$INPUT_MPP_ARGS{$input_name}} );
 	my $ra_user_values = shift( @_ );
 	unless( ref( $ra_user_values ) eq 'ARRAY' ) {
 		$ra_user_values = [$ra_user_values];
@@ -1992,7 +2021,7 @@ sub make_input_tag_group {
 	my $input_name = lc(shift( @_ ));
 	my $ra_params = shift( @_ );
 	my $rh_params = $self->params_to_hash( $ra_params,
-		$self->positional_by_default(), @{$INPUT_GROUP_MPP_ARGS{$input_name}} );
+		$self->{$KEY_AUTO_POSIT}, @{$INPUT_GROUP_MPP_ARGS{$input_name}} );
 	my $ra_user_values = shift( @_ );
 	unless( ref( $ra_user_values ) eq 'ARRAY' ) {
 		$ra_user_values = [$ra_user_values];
@@ -2197,7 +2226,7 @@ can accept all the same argument formats.  Exceptions to this include:
 
 =item 0
 
-None of our methods are exported and must be called using indirect
+None of our methods are exported and must be called using object
 notation, whereas CGI.pm can export any of it's methods.
 
 =item 0

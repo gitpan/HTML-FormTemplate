@@ -1,3 +1,19 @@
+2001-02-16   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 1.04.
+	
+	* This release is entirely to maintain compatability with HTML::EasyTags 
+	1.03, which is a parent class.  Specifically, one of the class properties 
+	and its associated accessor method, positional_by_default(), was removed from
+	HTML::EasyTags because it was no longer needed there.  However, since some 
+	methods of HTML::FormTemplate do use this property, it and the associated 
+	method has been added to HTML::FormTemplate itself.
+
+	* This class now requires versions 1.03 each of Class::ParamParser and 
+	HTML::EasyTags, so you will need to have them installed.  Note that I 
+	consider those two releases to be complete and stable, so they are unlikely 
+	to be changed in the forseeable future.
+
 2001-01-30   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 1.03.
@@ -38,7 +54,7 @@ HTML::
 		- "libdwg": v1.0 r2000-07-23, v1.11 r2000-08-23
 		- "CGI-FormGenerator": v0.9 r2000-09-04, v0.9201 r2000-12-26
 	
-	* This module requires Perl version 5.004 (although 5.0 may work).
+	* This module requires Perl version 5.004.
 	It also requires HTML::EasyTags 1.02, and CGI::MultiValuedHash 1.03.
 
 	* Code changes since HTML::FormMaker consist mainly in accounting for 
