@@ -9,7 +9,7 @@ HTML::FormTemplate - Make data-defined persistant forms, reports
 package HTML::FormTemplate;
 require 5.004;
 
-# Copyright (c) 1999-2003, Darren R. Duncan.  All rights reserved.  This module
+# Copyright (c) 1999-2004, Darren R. Duncan.  All rights reserved.  This module
 # is free software; you can redistribute it and/or modify it under the same terms
 # as Perl itself.  However, I do request that this copyright information and
 # credits remain attached to the file.  If you modify this module and
@@ -20,7 +20,7 @@ require 5.004;
 use strict;
 use warnings;
 use vars qw($VERSION @ISA);
-$VERSION = '2.021';
+$VERSION = '2.03';
 
 ######################################################################
 
@@ -39,7 +39,7 @@ $VERSION = '2.021';
 	Class::ParamParser 1.041
 	HTML::EasyTags 1.071
 	Data::MultiValuedHash 1.081
-	CGI::MultiValuedHash 1.081
+	CGI::MultiValuedHash 1.09
 
 =cut
 
@@ -49,7 +49,7 @@ use Class::ParamParser 1.041;
 @ISA = qw( Class::ParamParser );
 use HTML::EasyTags 1.071;
 use Data::MultiValuedHash 1.081;
-use CGI::MultiValuedHash 1.081;
+use CGI::MultiValuedHash 1.09;
 
 ######################################################################
 
@@ -1884,6 +1884,12 @@ sub make_html_input_echo {
 
 		my @input = grep { $_ ne '' } $user_input->fetch( $name );
 		scalar( @input ) or @input = $empty_field_str;
+		foreach (@input) { 
+			s/&/&amp;/g;
+			s/\"/&quot;/g;
+			s/>/&gt;/g;
+			s/</&lt;/g;
+		}
 		my $user_input_str = join( $in_table_format ? '<br />' : ', ', @input );
 
 		if( $in_table_format ) {

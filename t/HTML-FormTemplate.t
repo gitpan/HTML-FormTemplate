@@ -8,7 +8,7 @@
 
 BEGIN { $| = 1; print "1..2\n"; }
 END {print "not ok 1\n" unless $loaded;}
-use HTML::FormTemplate 2.021;
+use HTML::FormTemplate 2.03;
 $loaded = 1;
 print "ok 1\n";
 use strict;

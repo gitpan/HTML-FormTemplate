@@ -8,6 +8,6 @@ WriteMakefile(
 		'Class::ParamParser' => 1.041,
 		'HTML::EasyTags' => 1.071,
 		'Data::MultiValuedHash' => 1.081,
-		'CGI::MultiValuedHash' => 1.081,
+		'CGI::MultiValuedHash' => 1.09,
 	},
 );

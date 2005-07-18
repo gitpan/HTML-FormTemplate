@@ -1,3 +1,24 @@
+2005-07-18   Darren Duncan <perl@DarrenDuncan.net>
+
+	* Release 2.03.
+
+	* Updated HTML::FormTemplate (now v2.03 up from v2.021) to fix a bug in the
+	make_html_input_echo() method where the user input was not being
+	HTML-escaped like in make_html_input_form(), allowing for users to leave
+	deceptive messages, hyperlinks, or script attacks.  After the change, the
+	raw input is always displayed, so viewers see exactly what was entered. 
+	Note that this module was always intended to treat input as plain text, and
+	users should never be entering HTML and expect it to be treated as such on
+	display.  No other functional changes.
+
+	* Note that this fix was actually done on 2004-09-26, but actually releasing 
+	the fix on CPAN was neglected until 2005-07-18.
+
+	* Updated copyright statement range to 2004, when the fix was made.
+
+	* Updated external dependency on CGI::MultiValuedHash to v1.09 from v1.081 
+	(not required to fix the bug, but a good idea none-the-less).
+
 2003-03-16   Darren Duncan <perl@DarrenDuncan.net>
 
 	* Release 2.021.

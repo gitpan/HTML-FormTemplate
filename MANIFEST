@@ -4,3 +4,4 @@ Makefile.PL
 MANIFEST
 ReadMe
 t/HTML-FormTemplate.t
+META.yml                                 Module meta-data (added by MakeMaker)
